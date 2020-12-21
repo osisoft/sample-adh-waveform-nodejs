@@ -33,7 +33,7 @@ resources:
 variables:
   - template: '/miscellaneous/build_templates/variables.yml@templates'
   - name: projPath
-    value: /basic_samples/SDS/NodeJS
+    value: '/src/'
   - name: CredFile
     value: config.js
   - name: CredFileLibrary
