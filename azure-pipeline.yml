@@ -2,38 +2,30 @@ trigger:
   batch: true
   branches:
     include:
-      - master
-  paths:
-    include:
-      - '/'
+      - main
 
 pr:
   branches:
     include:
-      - master
-  paths:
-    include:
-      - '/'
+      - main
 
 schedules:
   - cron: '0 0 * * 0'
     displayName: Weekly build
     branches:
       include:
-        - master
+        - main
     always: true
 
 resources:
   repositories:
-  - repository: templates
-    type: github
-    name: osisoft/OSI-Samples
-    endpoint: osisoft/OSI-Samples
+    - repository: templates
+      type: github
+      name: osisoft/OSI-Samples
+      endpoint: osisoft/OSI-Samples
 
 variables:
   - template: '/miscellaneous/build_templates/variables.yml@templates'
-  - name: projPath
-    value: '/'
   - name: CredFile
     value: config.js
   - name: CredFileLibrary
@@ -43,32 +35,19 @@ variables:
 
 jobs:
   - job: Tests
-    strategy:
-      matrix:
-        linux:
-          imageName: ubuntu-latest
-        windows:
-          imageName: windows-latest
     pool:
-      vmImage: $(imageName)
+      name: 00-OSIManaged-Containers
+      demands: Agent.OS -equals Windows_NT
     steps:
       - template: '/miscellaneous/build_templates/config.yml@templates'
         parameters:
           fileOriginal: $(CredFile)
           fileLibrary: $(CredFileLibrary)
-          filePath: $(projPath)
 
-      - task: NodeTool@0
-        inputs:
-          versionSpec: '10.x'
-        displayName: 'Specify Node version'
-
-      - bash: npm ci
-        workingDirectory: $(Build.SourcesDirectory)$(projPath)
+      - script: npm ci
         displayName: 'Install dependencies'
 
-      - bash: npm test
-        workingDirectory: $(Build.SourcesDirectory)$(projPath)/
+      - script: npm test
         displayName: 'Run tests'
 
       - task: PublishTestResults@2
@@ -76,11 +55,9 @@ jobs:
           testResultsFormat: JUnit
           testResultsFiles: '*.xml'
           failTaskOnFailedTests: true
-          searchFolder: '$(Build.SourcesDirectory)$(projPath)/TestResults'
+          searchFolder: '$(Build.SourcesDirectory)/TestResults'
           testRunTitle: '$(Agent.JobName) on $(imageName)'
         displayName: 'Publish test results'
         condition: always()
 
-  - template: '/miscellaneous/build_templates/analysis.yml@templates'
-    parameters:
-      language: nodejs
+      - template: '/miscellaneous/build_templates/analysis.yml@templates'
