@@ -56,7 +56,7 @@ jobs:
           testResultsFiles: '*.xml'
           failTaskOnFailedTests: true
           searchFolder: '$(Build.SourcesDirectory)/TestResults'
-          testRunTitle: '$(Agent.JobName) on $(imageName)'
+          testRunTitle: '$(Agent.JobName) on $(Agent.OS)'
         displayName: 'Publish test results'
         condition: always()
 
