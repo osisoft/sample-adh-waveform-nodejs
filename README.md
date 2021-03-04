@@ -1,8 +1,8 @@
 ﻿# Sequential Data Store NodeJS Sample
 
-**Version:** 1.0.16
+**Version:** 1.0.17
 
-[![Build Status](https://dev.azure.com/osieng/engineering/_apis/build/status/product-readiness/OCS/osisoft.sample-ocs-waveform-nodejs?repoName=osisoft%2Fsample-ocs-waveform-nodejs&branchName=master)](https://dev.azure.com/osieng/engineering/_build/latest?definitionId=2630&repoName=osisoft%2Fsample-ocs-waveform-nodejs&branchName=master)
+[![Build Status](https://dev.azure.com/osieng/engineering/_apis/build/status/product-readiness/OCS/osisoft.sample-ocs-waveform-nodejs?repoName=osisoft%2Fsample-ocs-waveform-nodejs&branchName=main)](https://dev.azure.com/osieng/engineering/_build/latest?definitionId=2630&repoName=osisoft%2Fsample-ocs-waveform-nodejs&branchName=main)
 
 ## Building a Client to make REST API Calls to the SDS Service
 
@@ -647,6 +647,6 @@ restCall({
 
 Automated test uses Node 8.16.0 x64
 
-For the main OCS waveform samples page on master [ReadMe](https://github.com/osisoft/OSI-Samples-OCS/blob/master/docs/SDS_WAVEFORM_README.md)  
-For the main OCS samples page on master [ReadMe](https://github.com/osisoft/OSI-Samples-OCS)  
-For the main OSIsoft samples page on master [ReadMe](https://github.com/osisoft/OSI-Samples)
+For the main OCS waveform samples page [ReadMe](https://github.com/osisoft/OSI-Samples-OCS/blob/main/docs/SDS_WAVEFORM_README.md)  
+For the main OCS samples page [ReadMe](https://github.com/osisoft/OSI-Samples-OCS)  
+For the main OSIsoft samples page [ReadMe](https://github.com/osisoft/OSI-Samples)
