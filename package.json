@@ -17,6 +17,7 @@
   },
   "requires": true,
   "dependencies": {
+    "axios": "^0.21.1",
     "request-promise": "^4.2.6"
   },
   "devDependencies": {

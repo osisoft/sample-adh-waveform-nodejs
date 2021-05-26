@@ -1,4 +1,5 @@
-var restCall = require('request-promise');
+var axios = require('axios');
+var querystring = require('querystring');
 
 var logError = function (err) {
   success = false;
@@ -64,7 +65,7 @@ module.exports = {
 
     // returns an access token
     this.getToken = function (clientId, clientSecret, resource) {
-      return restCall({
+      return axios({
         url: resource + '/identity/.well-known/openid-configuration',
         method: 'GET',
         headers: {
