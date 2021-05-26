@@ -77,6 +77,11 @@ module.exports = {
           var obj = JSON.parse(res);
           authority = obj.token_endpoint;
 
+          var body = new URLSearchParams();
+          body.append('grant_type', 'client_credentials');
+          body.append('client_id', clientId);
+          body.append('client_secret', clientSecret);
+
           return restCall({
             url: authority,
             method: 'POST',
