@@ -284,6 +284,7 @@ var app = function (request1, response) {
     .then(
       // Step 2
       function (res) {
+        console.log(client.token);
         console.log('\nCreating an SdsType');
         refreshToken(res, client);
         if (client.tokenExpires < nowSeconds) {

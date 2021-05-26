@@ -1,5 +1,6 @@
 var axios = require('axios');
 var querystring = require('querystring');
+var zlib = require('zlib');
 
 var logError = function (err) {
   success = false;
@@ -69,12 +70,12 @@ module.exports = {
         url: resource + '/identity/.well-known/openid-configuration',
         method: 'GET',
         headers: {
-          Accept: 'application/json',
-        },
-        gzip: true,
+          'Accept': 'application/json',
+          'Accept-Encoding': 'gzip'
+        }
       })
         .then(function (res) {
-          var obj = JSON.parse(res);
+          var obj = res.data;
           authority = obj.token_endpoint;
 
           var body = new URLSearchParams();
@@ -82,19 +83,10 @@ module.exports = {
           body.append('client_id', clientId);
           body.append('client_secret', clientSecret);
 
-          return restCall({
-            url: authority,
-            method: 'POST',
+          return axios.post(authority, body, {
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            form: {
-              grant_type: 'client_credentials',
-              client_id: clientId,
-              client_secret: clientSecret,
-              resource: resource,
-            },
-            gzip: true,
+            }
           });
         })
         .catch(function (err) {
