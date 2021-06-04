@@ -17,12 +17,10 @@
   },
   "requires": true,
   "dependencies": {
-    "axios": "^0.21.1",
-    "request-promise": "^4.2.6"
+    "axios": "^0.21.1"
   },
   "devDependencies": {
     "jasmine": "^3.7.0",
-    "jasmine-reporters": "^2.4.0",
-    "request": "^2.88.2"
+    "jasmine-reporters": "^2.4.0"
   }
 }

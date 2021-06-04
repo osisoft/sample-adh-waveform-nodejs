@@ -17,7 +17,7 @@ var checkTokenExpired = function (client) {
 };
 
 var refreshToken = function (res, client) {
-  var obj = JSON.parse(res);
+  var obj = res.data;
   client.token = obj.access_token;
   client.tokenExpires = obj.expires_on;
 };
@@ -284,7 +284,6 @@ var app = function (request1, response) {
     .then(
       // Step 2
       function (res) {
-        console.log(client.token);
         console.log('\nCreating an SdsType');
         refreshToken(res, client);
         if (client.tokenExpires < nowSeconds) {
@@ -468,7 +467,7 @@ var app = function (request1, response) {
 
   var printLastValue = getLastValue
     .then(function (res) {
-      var lastEvent = JSON.parse(res);
+      var lastEvent = res.data;
       dumpEvent(lastEvent);
     })
     .catch(function (err) {
@@ -513,7 +512,7 @@ var app = function (request1, response) {
 
   var printWindowEvents = getWindowEvents
     .then(function (res) {
-      var allEvents = JSON.parse(res);
+      var allEvents = res.data;
       dumpEvents(allEvents);
       return allEvents;
     })
@@ -559,7 +558,7 @@ var app = function (request1, response) {
 
   var printWindowEventsTable = getWindowEventsTable
     .then(function (res) {
-      var allEvents = JSON.parse(res);
+      var allEvents = res.data;
       console.log('\nValues in table format');
       console.log(JSON.stringify(allEvents));
       return allEvents;
@@ -690,7 +689,7 @@ var app = function (request1, response) {
 
   var printUpdateEvents = getWindowEvents
     .then(function (res) {
-      var updatedEvents = JSON.parse(res);
+      var updatedEvents = res.data;
       dumpEvents(updatedEvents);
       return updatedEvents;
     })
@@ -825,7 +824,7 @@ var app = function (request1, response) {
 
   var printReplaceEvents = getReplacedEvents
     .then(function (res) {
-      var updatedEvents = JSON.parse(res);
+      var updatedEvents = res.data;
       dumpEvents(updatedEvents);
     })
     .catch(function (err) {
@@ -872,7 +871,7 @@ var app = function (request1, response) {
 
   var printInterpolatedEvents = getInterpolatedEvents
     .then(function (res) {
-      var updatedEvents = JSON.parse(res);
+      var updatedEvents = res.data;
       console.log('Interpolated events');
       dumpEvents(updatedEvents);
     })
@@ -918,7 +917,7 @@ var app = function (request1, response) {
 
   var printFilteredEvents = getFilteredEvents
     .then(function (res) {
-      var updatedEvents = JSON.parse(res);
+      var updatedEvents = res.data;
       console.log('Filtered events');
       dumpEvents(updatedEvents);
     })
@@ -968,7 +967,7 @@ var app = function (request1, response) {
 
   var printSampledValues = getSampledValues
     .then(function (res) {
-      var sampledValues = JSON.parse(res);
+      var sampledValues = res.data;
       console.log('Sampled values');
       dumpEvents(sampledValues);
     })
@@ -1025,7 +1024,7 @@ var app = function (request1, response) {
   var propertyOverrides = [propertyOverride];
 
   var printDefaultBehavior = getRangeEvents.then(function (res) {
-    var obj = JSON.parse(res);
+    var obj = res.data;
     foundEvents = obj;
     console.log(
       '\nSds can interpolate or extrapolate data at an index location where data does not explicitly exist.'
@@ -1109,7 +1108,7 @@ var app = function (request1, response) {
 
   // print stepwise results
   var printResultEvent = getRangeEvents.then(function (res) {
-    var obj = JSON.parse(res);
+    var obj = res.data;
     foundEvents = obj;
     console.log(
       '\nWe can override this behavior on a property by property basis, here we override the Radians property instructing Sds not to interpolate.'
@@ -1387,7 +1386,7 @@ var app = function (request1, response) {
   // print results
   var dumpStreamViewEvent = getRangeStreamViewEvents
     .then(function (res) {
-      var obj = JSON.parse(res);
+      var obj = res.data;
       console.log(
         "\nSpecifying a StreamView with an SdsType of the same shape returns values that are automatically mapped to the target SdsType's properties:"
       );
@@ -1449,7 +1448,7 @@ var app = function (request1, response) {
   // print results
   var dumpIntegerStreamViewEvent = getRangeIntegerStreamViewEvents
     .then(function (res) {
-      var obj = JSON.parse(res);
+      var obj = res.data;
       console.log(
         '\nSdsStreamViews can also convert certain types of data, here we return integers where the original values were doubles:'
       );
@@ -1499,7 +1498,7 @@ var app = function (request1, response) {
   // print map
   var dumpMapResult = getAutoSdsStreamViewMap
     .then(function (res) {
-      var obj = JSON.parse(res);
+      var obj = res.data;
       console.log(
         '\nWe can query Sds to return the SdsStreamViewMap for our SdsStreamView, here is the one generated automatically:'
       );
@@ -1539,7 +1538,7 @@ var app = function (request1, response) {
   // print map
   dumpMapResult = getManualSdsStreamViewMap
     .then(function (res) {
-      var obj = JSON.parse(res);
+      var obj = res.data;
       console.log(
         '\nHere is our explicit mapping, note SdsStreamViewMap will return all properties of the Source Type, even those without a corresponding Target property:'
       );
@@ -1585,7 +1584,7 @@ var app = function (request1, response) {
   var printFirstValueSV = getFirstValueSV
     .then(function (res) {
       console.log('\nReminder of FirstValue:');
-      dumpEvent(JSON.parse(res));
+      dumpEvent(res.data);
     })
     .catch(function (err) {
       logError(err);
@@ -1682,7 +1681,7 @@ var app = function (request1, response) {
   var printFirstValueSV2 = getFirstValueSV2
     .then(function (res) {
       console.log('\nNew FirstValue:');
-      dumpEventTarget(JSON.parse(res));
+      dumpEventTarget(res.data);
     })
     .catch(function (err) {
       logError(err);
@@ -1882,7 +1881,7 @@ var app = function (request1, response) {
   // print tags
   var printTags = getTags
     .then(function (res) {
-      var obj = JSON.parse(res);
+      var obj = res.data;
       console.log('\nTags now associated with ' + sampleStreamId + ':');
       obj.forEach(function (elem, index) {
         console.log(elem);
@@ -1926,7 +1925,7 @@ var app = function (request1, response) {
   var printMetadata = getMetadata
     .then(function (res) {
       console.log('\nMetadata now associated with ' + sampleStreamId + ':');
-      var obj = JSON.parse(res);
+      var obj = res.data;
       console.log('Metadata key Region: ' + obj['Region']);
       console.log('Metadata key Country: ' + obj['Country']);
       console.log('Metadata key Province: ' + obj['Province']);
@@ -1976,7 +1975,7 @@ var app = function (request1, response) {
   var printMetadata2 = patchMetadata
     .then(function (res) {
       console.log('\nMetadata now associated with ' + sampleStreamId + ':');
-      var obj = JSON.parse(res);
+      var obj = res.data;
       console.log('Metadata key Country: ' + obj['Country']);
       console.log('Metadata key Province: ' + obj['Province']);
       console.log('Metadata key City: ' + obj['City']);
@@ -2126,7 +2125,7 @@ var app = function (request1, response) {
 
   var printSecondaryStream = getSecondaryStream
     .then(function (res) {
-      if (JSON.parse(res)['Indexes'].length != 1)
+      if (res.data['Indexes'].length != 1)
         throw 'Indexes not right.  Secondary index expected';
     })
     .catch(function (err) {
@@ -2160,7 +2159,7 @@ var app = function (request1, response) {
 
   var updateOriginalStream = getOriginalStream
     .then(function (res) {
-      var stream = JSON.parse(res);
+      var stream = res.data;
       stream['Indexes'] = [{ SdsTypePropertyId: 'RadiansTarget' }];
       console.log('\n New original Stream:');
       console.log(JSON.stringify(stream));
@@ -2244,7 +2243,7 @@ var app = function (request1, response) {
 
   var updateSecondaryStream = getSecondaryStreamAgain
     .then(function (res) {
-      var stream = JSON.parse(res);
+      var stream = res.data;
       stream['Indexes'] = [];
       console.log('\nNew Secondary Stream:');
       console.log(JSON.stringify(stream));
@@ -2445,7 +2444,7 @@ var app = function (request1, response) {
   var printLastValue2 = getLastValue2
     .then(function (res) {
       console.log('\nLastValue:');
-      dumpEvent(JSON.parse(res));
+      dumpEvent(res.data);
     })
     .catch(function (err) {
       logError(err);
@@ -2482,7 +2481,7 @@ var app = function (request1, response) {
   var printFirstValue = getFirstValue
     .then(function (res) {
       console.log('\nFirstValue:');
-      dumpEvent(JSON.parse(res));
+      dumpEvent(res.data);
     })
     .catch(function (err) {
       logError(err);
@@ -2524,7 +2523,7 @@ var app = function (request1, response) {
   var printWindowEvents2 = getWindowEvents2
     .then(function (res) {
       console.log('\nWindow Value:');
-      dumpEvents(JSON.parse(res));
+      dumpEvents(res.data);
     })
     .catch(function (err) {
       logError(err);
