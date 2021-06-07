@@ -84,8 +84,6 @@ module.exports = {
             client_secret: clientSecret,
           });
 
-          console.log(body.toString());
-
           return axios.post(authority, body.toString(), {
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded',
