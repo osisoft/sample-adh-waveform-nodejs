@@ -583,7 +583,7 @@ module.exports = {
     this.gzipCompress = function (data, headers) {
       if (
         'Content-Encoding' in headers &&
-        headers['Content-Encoding'] == 'gzip'
+        headers['Content-Encoding'].toLowerCase() === 'gzip'
       )
         return zlib.gzipSync(data);
       return data;
