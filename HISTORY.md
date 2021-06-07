@@ -2,7 +2,7 @@
 
 ## 1.0.19 / 2021-05-04
 
-- Replace depricated package Request with Axios
+- Replace deprecated package Request with Axios
 
 ## 1.0.18 / 2021-05-24
 
