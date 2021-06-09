@@ -1,6 +1,6 @@
 ﻿# Sequential Data Store NodeJS Sample
 
-**Version:** 1.0.18
+**Version:** 1.0.19
 
 [![Build Status](https://dev.azure.com/osieng/engineering/_apis/build/status/product-readiness/OCS/osisoft.sample-ocs-waveform-nodejs?repoName=osisoft%2Fsample-ocs-waveform-nodejs&branchName=main)](https://dev.azure.com/osieng/engineering/_build/latest?definitionId=2630&repoName=osisoft%2Fsample-ocs-waveform-nodejs&branchName=main)
 
@@ -9,7 +9,7 @@
 This sample demonstrates how SDS REST APIs are invoked using JavaScript. By examining the code, you will see how to establish a connection to SDS, obtain an authorization token, obtain an SdsNamespace, create an SdsType and SdsStream, and how to create, read, update, and delete values in SDS. It has the following dependencies:
 
 1. node.js, installation instructions are available at [node.js](https://nodejs.org/en/).
-1. Request-Promise, HTTP client Request with Promises/A+ compliance. See [request-promise](https://www.npmjs.com/package/request-promise).
+1. Axios, Promise based HTTP client for the browser and node.js. See [Axios](https://www.npmjs.com/package/axios).
 
 ## Prerequisites
 
@@ -43,7 +43,7 @@ Developed against Node 10.14.1.
 
 ## Establish a Connection
 
-The sample uses `request-promise` module to connect a service endpoint. Each REST API call consists of an HTTP request along with a specific URL and HTTP method. The URL contains the server name plus the extension that is specific to the call. Like all REST APIs, the SDS REST API maps HTTP methods to CRUD operations as shown in the following table:
+The sample uses `axios` module to connect a service endpoint. Each REST API call consists of an HTTP request along with a specific URL and HTTP method. The URL contains the server name plus the extension that is specific to the call. Like all REST APIs, the SDS REST API maps HTTP methods to CRUD operations as shown in the following table:
 
 | HTTP Method | CRUD Operation | Content Found In |
 | ----------- | -------------- | ---------------- |
@@ -51,35 +51,6 @@ The sample uses `request-promise` module to connect a service endpoint. Each RES
 | GET         | Retrieve       | URL parameters   |
 | PUT         | Update         | message body     |
 | DELETE      | Delete         | URL parameters   |
-
-The REST calls in this sample are set up as follows:
-
-```js
-var restCall = require('request-promise');
-restCall({
-  url: authItems['authority'],
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/x-www-form-urlencoded',
-  },
-  form: {
-    grant_type: 'client_credentials',
-    client_id: authItems['clientId'],
-    client_secret: authItems['clientSecret'],
-    resource: authItems['resource'],
-  },
-  gzip: true,
-});
-```
-
-- `url` - The service endpoint
-- `method` - Denotes the type of REST call
-- `form` `grant_type` - Type of client to use, in this case `client_credentials`
-- `form` `client_id` & `client_secret` - Client credentials provided by service provider
-- `form` `resource` - Resource string for token acquisition
-- `gzip: true` - Specifies, for each individual request in this sample, to use `gzip` compression
-
-`Request-Promise` is used in the current sample in order to execute the REST calls in sequence. It is not mandatory. In fact, the same syntax can be used with `request` module. It adds the Bluebird-powered `.then(...)` method to `request` call objects. This can be used to achieve an `await()` effect. It supports all the features as that of the `request` library, except that callbacks are replaced with promises.
 
 ## Configure the Sample
 
@@ -123,15 +94,15 @@ The token received from `getToken` is included in the headers of each SDS REST A
 ```js
 this.getHeaders = function() {
     return {
-        "Authorization" : "bearer "+ this.token,
-        "Content-type": "application/json",
-        "Accept": "*/*; q=1"
+        'Accept-Encoding': 'gzip',
+        'Content-Encoding': 'gzip',
+        Authorization: 'bearer ' + this.token,
+        'Content-type': 'application/json',
+        Accept: '*/*; q=1',
     }
 ```
 
 Note that the value of the `Authorization` header is the word "bearer", followed by a space, and followed by the token string.
-
-Also, note that the `gzip: true` option passed to the request will automatically add the header `Accept-Encoding: gzip` as well, even though it is not explicitly specified here.
 
 Authentication tokens have an expiration time which can be checked via the `token_expires` property. The sample code handles checking the token expiration and refreshing it as needed. As mentioned above, Microsoft also provides an authentication library compatible with angular.js that handles token caching and refresh transparently.
 
@@ -148,7 +119,7 @@ if (client.tokenExpires < nowSeconds) {
 }
 ```
 
-Note: The `checkTokenExpired` method returns a request-promise object, which can have a `.then()` and a `.catch()` method associated with it. The `.then()` method is executed when the request-promise is resolved (or successful) and `.catch()` is executed if an exception or error is thrown. This sample follows a pattern of placing REST calls in the `.then()` method after token acquisition (or other dependent REST calls):
+Note: The `checkTokenExpired` method returns a promise object, which can have a `.then()` and a `.catch()` method associated with it. The `.then()` method is executed when the promise is resolved (or successful) and `.catch()` is executed if an exception or error is thrown. This sample follows a pattern of placing REST calls in the `.then()` method after token acquisition (or other dependent REST calls):
 
 ```js
 var getClientToken = client.getToken(authItems)
@@ -190,13 +161,13 @@ var orderProperty = new sdsObjs.SdsTypeProperty({
 An SdsType can be created by a POST request as follows:
 
 ```js
-restCall({
+axios({
   url:
     this.url + this.typesBase.format([tenantId, namespaceId]) + '/' + type.Id,
   method: 'POST',
   headers: this.getHeaders(),
-  body: JSON.stringify(type).toString(),
-  gzip: true,
+  data: JSON.stringify(type).toString(),
+  transformRequest: [(data, headers) => this.gzipCompress(data, headers)],
 });
 ```
 
@@ -221,7 +192,7 @@ var sampleStream = new sdsObjs.SdsStream({
 The local SdsStream can be created in the SDS service by a POST request as follows.
 
 ```js
-restCall({
+axios({
   url:
     this.url +
     this.streamsBase.format([tenantId, namespaceId]) +
@@ -229,8 +200,8 @@ restCall({
     stream.Id,
   method: 'POST',
   headers: this.getHeaders(),
-  body: JSON.stringify(stream).toString(),
-  gzip: true,
+  data: JSON.stringify(stream).toString(),
+  transformRequest: [(data, headers) => this.gzipCompress(data, headers)],
 });
 ```
 
@@ -241,7 +212,7 @@ A single event is a data point in the stream. An event object cannot be empty an
 When inserting single or multiple values, the payload has to be a list of events. An event can be created using the following POST request:
 
 ```js
-restCall({
+axios({
   url:
     this.url +
     this.streamsBase.format([tenantId, namespaceId]) +
@@ -250,8 +221,8 @@ restCall({
     this.insertValuesBase,
   method: 'POST',
   headers: this.getHeaders(),
-  body: JSON.stringify(events),
-  gzip: true,
+  data: JSON.stringify(events),
+  transformRequest: [(data, headers) => this.gzipCompress(data, headers)],
 });
 ```
 
@@ -314,14 +285,13 @@ There are many methods in the SDS REST API that allow the retrieval of events fr
 `getWindowValues` is used for retrieving events over a specific index range. Here is the request:
 
 ```js
-restCall({
+axios({
   url:
     this.url +
     this.streamsBase.format([tenantId, namespaceId]) +
     this.getWindowValuesBase.format([streamId, start, end]),
   method: 'GET',
   headers: this.getHeaders(),
-  gzip: true,
 });
 ```
 
@@ -340,7 +310,7 @@ client.getWindowValues(tenantId, sampleNamespaceId, sampleStreamId, 0, 180);
 You can also retrieve the values in the form of a table (in this case with headers). Here is the request:
 
 ```js
-restCall({
+axios({
   url:
     this.url +
     this.streamsBase.format([tenantId, namespaceId]) +
@@ -348,7 +318,6 @@ restCall({
     '&form=tableh',
   method: 'GET',
   headers: this.getHeaders(),
-  gzip: true,
 });
 ```
 
@@ -373,7 +342,7 @@ client.getWindowValuesTable(
 `getRangeValues` is a method in `SdsClient` used for retrieving a specified number of events from a starting index. The starting index is the ID of the `SdsTypeProperty` that corresponds to the key value of the WaveData type. Here is the request:
 
 ```js
-restCall({
+axios({
   url:
     this.url +
     this.streamsBase.format([tenantId, namespaceId]) +
@@ -388,7 +357,6 @@ restCall({
     ]),
   method: 'GET',
   headers: this.getHeaders(),
-  gzip: true,
 });
 ```
 
@@ -417,7 +385,7 @@ client.getRangeValues(
 Sampling allows retrieval of a representative sample of data between a start and end index. Sampling is driven by a specified property or properties of the stream's Sds Type. Property types that cannot be interpolated do not support sampling requests. Strings are an example of a property that cannot be interpolated. For more information see [Interpolation.](https://ocs-docs.osisoft.com/Content_Portal/Documentation/SequentialDataStore/SDS_Types.html#interpolation) Here is the request:
 
 ```js
-restCall({
+axios({
   url:
     this.url +
     this.streamsBase.format([tenantId, namespaceId]) +
@@ -432,7 +400,6 @@ restCall({
     ]),
   method: 'GET',
   headers: this.getHeaders(),
-  gzip: true,
 });
 ```
 
@@ -460,7 +427,7 @@ client.getSampledValues(
 When updating single or multiple events, the payload has to be an array of event objects. Updating events is handled by the following PUT request. The request body has the new event that will update an existing event at the same index:
 
 ```js
-restCall({
+axios({
   url:
     this.url +
     this.streamsBase.format([tenantId, namespaceId]) +
@@ -469,8 +436,8 @@ restCall({
     this.updateValuesBase,
   method: 'PUT',
   headers: this.getHeaders(),
-  body: JSON.stringify(events),
-  gzip: true,
+  data: JSON.stringify(events),
+  transformRequest: [(data, headers) => this.gzipCompress(data, headers)],
 });
 ```
 
@@ -492,7 +459,7 @@ If you attempt to update values that do not exist, they will be created. The sam
 In contrast to updating, replacing a value only considers existing values and will not insert any new values into the stream. The sample program demonstrates this by replacing all twenty values. The calling conventions are identical to `updateValues`:
 
 ```js
-restCall({
+axios({
   url:
     this.url +
     this.streamsBase.format([tenantId, namespaceId]) +
@@ -501,8 +468,8 @@ restCall({
     this.replaceValuesBase,
   method: 'PUT',
   headers: this.getHeaders(),
-  body: JSON.stringify(events),
-  gzip: true,
+  data: JSON.stringify(events),
+  transformRequest: [(data, headers) => this.gzipCompress(data, headers)],
 });
 ```
 
@@ -594,24 +561,22 @@ var sdsStreamViewMap = client.getStreamViewMap(
 There are two methods in the sample that illustrate removing values from a stream of data. The first method deletes only a single value. The second method removes a window of values, much like retrieving a window of values. Removing values depends on the value's key type ID value. If a match is found within the stream, then that value will be removed. Code from both functions is shown below:
 
 ```js
-restCall({
+axios({
   url:
     this.url +
     this.streamsBase.format([tenantId, namespaceId]) +
     this.removeSingleValueBase.format([streamId, index]),
   method: 'DELETE',
   headers: this.getHeaders(),
-  gzip: true,
 });
 
-restCall({
+axios({
   url:
     this.url +
     this.streamsBase.format([tenantId, namespaceId]) +
     this.removeMultipleValuesBase.format([streamId, start, end]),
   method: 'DELETE',
   headers: this.getHeaders(),
-  gzip: true,
 });
 ```
 
@@ -622,7 +587,7 @@ As when retrieving a window of values, removing a window is inclusive; that is, 
 In order for the program to run repeatedly without collisions, the sample performs some cleanup before exiting. Deleting streams, stream views and types can be achieved by a DELETE REST call and passing the corresponding Id.
 
 ```js
-restCall({
+axios({
   url:
     this.url +
     this.streamsBase.format([tenantId, namespaceId]) +
@@ -630,16 +595,14 @@ restCall({
     streamId,
   method: 'DELETE',
   headers: this.getHeaders(),
-  gzip: true,
 });
 ```
 
 ```js
-restCall({
+axios({
   url: this.url + this.typesBase.format([tenantId, namespaceId]) + '/' + typeId,
   method: 'DELETE',
   headers: this.getHeaders(),
-  gzip: true,
 });
 ```
 

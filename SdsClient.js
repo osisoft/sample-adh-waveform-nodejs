@@ -1,4 +1,6 @@
-var restCall = require('request-promise');
+var axios = require('axios');
+const { URLSearchParams } = require('url');
+var zlib = require('zlib');
 
 var logError = function (err) {
   success = false;
@@ -64,31 +66,28 @@ module.exports = {
 
     // returns an access token
     this.getToken = function (clientId, clientSecret, resource) {
-      return restCall({
+      return axios({
         url: resource + '/identity/.well-known/openid-configuration',
         method: 'GET',
         headers: {
           Accept: 'application/json',
+          'Accept-Encoding': 'gzip',
         },
-        gzip: true,
       })
         .then(function (res) {
-          var obj = JSON.parse(res);
+          var obj = res.data;
           authority = obj.token_endpoint;
 
-          return restCall({
-            url: authority,
-            method: 'POST',
+          var body = new URLSearchParams({
+            grant_type: 'client_credentials',
+            client_id: clientId,
+            client_secret: clientSecret,
+          });
+
+          return axios.post(authority, body.toString(), {
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded',
             },
-            form: {
-              grant_type: 'client_credentials',
-              client_id: clientId,
-              client_secret: clientSecret,
-              resource: resource,
-            },
-            gzip: true,
           });
         })
         .catch(function (err) {
@@ -98,7 +97,7 @@ module.exports = {
 
     // create a type
     this.createType = function (tenantId, namespaceId, type) {
-      return restCall({
+      return axios({
         url:
           this.url +
           this.typesBase.format([tenantId, namespaceId]) +
@@ -106,14 +105,14 @@ module.exports = {
           type.Id,
         method: 'POST',
         headers: this.getHeaders(),
-        body: JSON.stringify(type).toString(),
-        gzip: true,
+        data: JSON.stringify(type).toString(),
+        transformRequest: [(data, headers) => this.gzipCompress(data, headers)],
       });
     };
 
     // create a stream under the Sds Service
     this.createStream = function (tenantId, namespaceId, stream) {
-      return restCall({
+      return axios({
         url:
           this.url +
           this.streamsBase.format([tenantId, namespaceId]) +
@@ -121,8 +120,8 @@ module.exports = {
           stream.Id,
         method: 'POST',
         headers: this.getHeaders(),
-        body: JSON.stringify(stream).toString(),
-        gzip: true,
+        data: JSON.stringify(stream).toString(),
+        transformRequest: [(data, headers) => this.gzipCompress(data, headers)],
       });
     };
 
@@ -134,7 +133,7 @@ module.exports = {
       skip,
       count
     ) {
-      return restCall({
+      return axios({
         url:
           this.url +
           this.streamsBase.format([tenantId, namespaceId]) +
@@ -143,13 +142,12 @@ module.exports = {
           queryString,
         method: 'GET',
         headers: this.getHeaders(),
-        gzip: true,
       });
     };
 
     // get stream from the Sds Service
     this.getStream = function (tenantId, namespaceId, streamId) {
-      return restCall({
+      return axios({
         url:
           this.url +
           this.streamsBase.format([tenantId, namespaceId]) +
@@ -157,13 +155,12 @@ module.exports = {
           streamId,
         method: 'GET',
         headers: this.getHeaders(),
-        gzip: true,
       });
     };
 
     // get streams from the Sds Service
     this.getTypes = function (tenantId, namespaceId, queryString, skip, count) {
-      return restCall({
+      return axios({
         url:
           this.url +
           this.typesBase.format([tenantId, namespaceId]) +
@@ -176,13 +173,12 @@ module.exports = {
           count,
         method: 'GET',
         headers: this.getHeaders(),
-        gzip: true,
       });
     };
 
     // create a streamView
     this.createStreamView = function (tenantId, namespaceId, streamView) {
-      return restCall({
+      return axios({
         url:
           this.url +
           this.streamViewsBase.format([tenantId, namespaceId]) +
@@ -190,14 +186,14 @@ module.exports = {
           streamView.Id,
         method: 'POST',
         headers: this.getHeaders(),
-        body: JSON.stringify(streamView).toString(),
-        gzip: true,
+        data: JSON.stringify(streamView).toString(),
+        transformRequest: [(data, headers) => this.gzipCompress(data, headers)],
       });
     };
 
     // get an SdsStreamViewMap
     this.getStreamViewMap = function (tenantId, namespaceId, streamViewId) {
-      return restCall({
+      return axios({
         url:
           this.url +
           this.streamViewsBase.format([tenantId, namespaceId]) +
@@ -206,7 +202,6 @@ module.exports = {
           '/Map',
         method: 'GET',
         headers: this.getHeaders(),
-        gzip: true,
       });
     };
 
@@ -217,7 +212,7 @@ module.exports = {
       streamId,
       streamViewId
     ) {
-      return restCall({
+      return axios({
         url:
           this.url +
           this.streamsBase.format([tenantId, namespaceId]) +
@@ -227,13 +222,12 @@ module.exports = {
           streamViewId,
         method: 'PUT',
         headers: this.getHeaders(),
-        gzip: true,
       });
     };
 
     // create tags
     this.updateTags = function (tenantId, namespaceId, streamId, tags) {
-      return restCall({
+      return axios({
         url:
           this.url +
           this.streamsBase.format([tenantId, namespaceId]) +
@@ -242,14 +236,14 @@ module.exports = {
           '/Tags',
         method: 'PUT',
         headers: this.getHeaders(),
-        body: JSON.stringify(tags),
-        gzip: true,
+        data: JSON.stringify(tags),
+        transformRequest: [(data, headers) => this.gzipCompress(data, headers)],
       });
     };
 
     // create metadata
     this.updateMetadata = function (tenantId, namespaceId, streamId, metadata) {
-      return restCall({
+      return axios({
         url:
           this.url +
           this.streamsBase.format([tenantId, namespaceId]) +
@@ -258,14 +252,14 @@ module.exports = {
           '/Metadata',
         method: 'PUT',
         headers: this.getHeaders(),
-        body: JSON.stringify(metadata),
-        gzip: true,
+        data: JSON.stringify(metadata),
+        transformRequest: [(data, headers) => this.gzipCompress(data, headers)],
       });
     };
 
     // create metadata
     this.patchMetadata = function (tenantId, namespaceId, streamId, patch) {
-      return restCall({
+      return axios({
         url:
           this.url +
           this.streamsBase.format([tenantId, namespaceId]) +
@@ -274,14 +268,14 @@ module.exports = {
           '/Metadata',
         method: 'PATCH',
         headers: this.getHeaders(),
-        body: JSON.stringify(patch),
-        gzip: true,
+        data: JSON.stringify(patch),
+        transformRequest: [(data, headers) => this.gzipCompress(data, headers)],
       });
     };
 
     // get tags
     this.getTags = function (tenantId, namespaceId, streamId) {
-      return restCall({
+      return axios({
         url:
           this.url +
           this.streamsBase.format([tenantId, namespaceId]) +
@@ -290,13 +284,12 @@ module.exports = {
           '/Tags',
         method: 'GET',
         headers: this.getHeaders(),
-        gzip: true,
       });
     };
 
     // get metadata
     this.getMetadata = function (tenantId, namespaceId, streamId, key) {
-      return restCall({
+      return axios({
         url:
           this.url +
           this.streamsBase.format([tenantId, namespaceId]) +
@@ -306,13 +299,12 @@ module.exports = {
           key,
         method: 'GET',
         headers: this.getHeaders(),
-        gzip: true,
       });
     };
 
     // insert an array of events
     this.insertEvents = function (tenantId, namespaceId, streamId, events) {
-      return restCall({
+      return axios({
         url:
           this.url +
           this.streamsBase.format([tenantId, namespaceId]) +
@@ -321,34 +313,32 @@ module.exports = {
           this.insertValuesBase,
         method: 'POST',
         headers: this.getHeaders(),
-        body: JSON.stringify(events),
-        gzip: true,
+        data: JSON.stringify(events),
+        transformRequest: [(data, headers) => this.gzipCompress(data, headers)],
       });
     };
 
     // get last value added to stream
     this.getLastValue = function (tenantId, namespaceId, streamId) {
-      return restCall({
+      return axios({
         url:
           this.url +
           this.streamsBase.format([tenantId, namespaceId]) +
           this.getLastValueBase.format([streamId]),
         method: 'GET',
         headers: this.getHeaders(),
-        gzip: true,
       });
     };
 
     // get last value added to stream
     this.getFirstValue = function (tenantId, namespaceId, streamId) {
-      return restCall({
+      return axios({
         url:
           this.url +
           this.streamsBase.format([tenantId, namespaceId]) +
           this.getFirstValueBase.format([streamId]),
         method: 'GET',
         headers: this.getHeaders(),
-        gzip: true,
       });
     };
 
@@ -361,14 +351,13 @@ module.exports = {
       end,
       filter = ''
     ) {
-      return restCall({
+      return axios({
         url:
           this.url +
           this.streamsBase.format([tenantId, namespaceId]) +
           this.getWindowValuesBase.format([streamId, start, end, filter]),
         method: 'GET',
         headers: this.getHeaders(),
-        gzip: true,
       });
     };
 
@@ -380,7 +369,7 @@ module.exports = {
       start,
       end
     ) {
-      return restCall({
+      return axios({
         url:
           this.url +
           this.streamsBase.format([tenantId, namespaceId]) +
@@ -388,7 +377,6 @@ module.exports = {
           '&form=tableh',
         method: 'GET',
         headers: this.getHeaders(),
-        gzip: true,
       });
     };
 
@@ -404,7 +392,7 @@ module.exports = {
       boundaryType,
       streamView = ''
     ) {
-      return restCall({
+      return axios({
         url:
           this.url +
           this.streamsBase.format([tenantId, namespaceId]) +
@@ -419,7 +407,6 @@ module.exports = {
           ]),
         method: 'GET',
         headers: this.getHeaders(),
-        gzip: true,
       });
     };
 
@@ -432,7 +419,7 @@ module.exports = {
       end,
       count
     ) {
-      return restCall({
+      return axios({
         url:
           this.url +
           this.streamsBase.format([tenantId, namespaceId]) +
@@ -444,7 +431,6 @@ module.exports = {
           ]),
         method: 'GET',
         headers: this.getHeaders(),
-        gzip: true,
       });
     };
 
@@ -460,7 +446,7 @@ module.exports = {
       filter = '',
       streamViewId = ''
     ) {
-      return restCall({
+      return axios({
         url:
           this.url +
           this.streamsBase.format([tenantId, namespaceId]) +
@@ -475,13 +461,12 @@ module.exports = {
           ]),
         method: 'GET',
         headers: this.getHeaders(),
-        gzip: true,
       });
     };
 
     // update a stream
     this.updateStream = function (tenantId, namespaceId, stream) {
-      return restCall({
+      return axios({
         url:
           this.url +
           this.streamsBase.format([tenantId, namespaceId]) +
@@ -489,14 +474,14 @@ module.exports = {
           stream.Id,
         method: 'PUT',
         headers: this.getHeaders(),
-        body: JSON.stringify(stream).toString(),
-        gzip: true,
+        data: JSON.stringify(stream).toString(),
+        transformRequest: [(data, headers) => this.gzipCompress(data, headers)],
       });
     };
 
     // update an array of events
     this.updateEvents = function (tenantId, namespaceId, streamId, events) {
-      return restCall({
+      return axios({
         url:
           this.url +
           this.streamsBase.format([tenantId, namespaceId]) +
@@ -505,14 +490,14 @@ module.exports = {
           this.updateValuesBase,
         method: 'PUT',
         headers: this.getHeaders(),
-        body: JSON.stringify(events),
-        gzip: true,
+        data: JSON.stringify(events),
+        transformRequest: [(data, headers) => this.gzipCompress(data, headers)],
       });
     };
 
     // replace an array of events
     this.replaceEvents = function (tenantId, namespaceId, streamId, events) {
-      return restCall({
+      return axios({
         url:
           this.url +
           this.streamsBase.format([tenantId, namespaceId]) +
@@ -521,21 +506,20 @@ module.exports = {
           this.replaceValuesBase,
         method: 'PUT',
         headers: this.getHeaders(),
-        body: JSON.stringify(events),
-        gzip: true,
+        data: JSON.stringify(events),
+        transformRequest: [(data, headers) => this.gzipCompress(data, headers)],
       });
     };
 
     // delete an event
     this.deleteEvent = function (tenantId, namespaceId, streamId, index) {
-      return restCall({
+      return axios({
         url:
           this.url +
           this.streamsBase.format([tenantId, namespaceId]) +
           this.removeSingleValueBase.format([streamId, index]),
         method: 'DELETE',
         headers: this.getHeaders(),
-        gzip: true,
       });
     };
 
@@ -547,20 +531,19 @@ module.exports = {
       start,
       end
     ) {
-      return restCall({
+      return axios({
         url:
           this.url +
           this.streamsBase.format([tenantId, namespaceId]) +
           this.removeMultipleValuesBase.format([streamId, start, end]),
         method: 'DELETE',
         headers: this.getHeaders(),
-        gzip: true,
       });
     };
 
     // delete a type
     this.deleteType = function (tenantId, namespaceId, typeId) {
-      return restCall({
+      return axios({
         url:
           this.url +
           this.typesBase.format([tenantId, namespaceId]) +
@@ -568,13 +551,12 @@ module.exports = {
           typeId,
         method: 'DELETE',
         headers: this.getHeaders(),
-        gzip: true,
       });
     };
 
     // delete a stream
     this.deleteStream = function (tenantId, namespaceId, streamId) {
-      return restCall({
+      return axios({
         url:
           this.url +
           this.streamsBase.format([tenantId, namespaceId]) +
@@ -582,13 +564,12 @@ module.exports = {
           streamId,
         method: 'DELETE',
         headers: this.getHeaders(),
-        gzip: true,
       });
     };
 
     // delete a StreamView
     this.deleteStreamView = function (tenantId, namespaceId, streamViewId) {
-      return restCall({
+      return axios({
         url:
           this.url +
           this.streamViewsBase.format([tenantId, namespaceId]) +
@@ -596,12 +577,22 @@ module.exports = {
           streamViewId,
         method: 'DELETE',
         headers: this.getHeaders(),
-        gzip: true,
       });
+    };
+
+    this.gzipCompress = function (data, headers) {
+      if (
+        'Content-Encoding' in headers &&
+        headers['Content-Encoding'].toLowerCase() === 'gzip'
+      )
+        return zlib.gzipSync(data);
+      return data;
     };
 
     this.getHeaders = function () {
       return {
+        'Accept-Encoding': 'gzip',
+        'Content-Encoding': 'gzip',
         Authorization: 'bearer ' + this.token,
         'Content-type': 'application/json',
         Accept: '*/*; q=1',

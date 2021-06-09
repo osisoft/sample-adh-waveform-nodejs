@@ -1,5 +1,9 @@
 # Version History
 
+## 1.0.19 / 2021-05-04
+
+- Replace deprecated package Request with Axios
+
 ## 1.0.18 / 2021-05-24
 
 - Updated dependencies
