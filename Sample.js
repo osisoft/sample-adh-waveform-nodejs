@@ -7,6 +7,7 @@ var clientId = config.clientId;
 var clientSecret = config.clientSecret;
 var tenantId = config.tenantId;
 var apiVersion = config.apiVersion;
+var communityId = config.communityId;
 var success = true;
 var errorCap = {};
 
@@ -1616,7 +1617,7 @@ var app = function (request1, response) {
   var printFirstS = getFirstS
     .then(function (res) {
       console.log('\nReminder of Stream def:');
-      console.log(res);
+      console.log(res.data);
     })
     .catch(function (err) {
       logError(err);
@@ -1713,7 +1714,7 @@ var app = function (request1, response) {
   var printFirstS2 = getFirstS2
     .then(function (res) {
       console.log('\nNew Stream def:');
-      console.log(res);
+      console.log(res.data);
     })
     .catch(function (err) {
       logError(err);
@@ -1744,7 +1745,7 @@ var app = function (request1, response) {
   var printTypes = getTypes
     .then(function (res) {
       console.log('\nTypes:');
-      console.log(res);
+      console.log(res.data);
     })
     .catch(function (err) {
       logError(err);
@@ -1784,7 +1785,7 @@ var app = function (request1, response) {
   var printTypesQuery = getTypesQuery
     .then(function (res) {
       console.log('\nTypes after Query:');
-      console.log(res);
+      console.log(res.data);
     })
     .catch(function (err) {
       logError(err);
@@ -1984,10 +1985,146 @@ var app = function (request1, response) {
       logError(err);
     });
 
+  let prevStep = printMetadata2;
+  // Community steps
+  if (communityId) {
+    // Step 18
+    var getTenantRoles = prevStep.then(
+      // getting tenant roles
+      function (res) {
+        console.log('\nGetting tenant roles');
+        if (client.tokenExpires < nowSeconds) {
+          return checkTokenExpired(client)
+            .then(function (res) {
+              refreshToken(res, client);
+              return client.getTenantRoles(tenantId);
+            })
+            .catch(function (err) {
+              logError(err);
+            });
+        } else {
+          return client.getTenantRoles(tenantId);
+        }
+      }
+    );
+
+    var communityMemberRoleTypeId = 'f79a55da-7c76-4600-a809-0f62ca9971d9';
+    var shareStream = getTenantRoles.then(
+      // sharing stream to community
+      function (res) {
+        var role = res.data.find(
+          (r) =>
+            r.RoleTypeId === communityMemberRoleTypeId &&
+            r.CommunityId === communityId
+        );
+        console.log('\nFound community member Id:');
+        console.log(role.Id);
+
+        console.log('\nSharing stream to community');
+        var patch = [
+          {
+            op: 'add',
+            path: '/RoleTrusteeAccessControlEntries/-',
+            value: {
+              AccessRights: 1,
+              AccessType: 0,
+              Trustee: { ObjectId: role.Id, TenantId: null, Type: 'Role' },
+            },
+          },
+        ];
+        if (client.tokenExpires < nowSeconds) {
+          return checkTokenExpired(client)
+            .then(function (res) {
+              refreshToken(res, client);
+              return client.updateStreamAccessControl(
+                tenantId,
+                sampleNamespaceId,
+                sampleStreamId,
+                patch
+              );
+            })
+            .catch(function (err) {
+              logError(err);
+            });
+        } else {
+          return client.updateStreamAccessControl(
+            tenantId,
+            sampleNamespaceId,
+            sampleStreamId,
+            patch
+          );
+        }
+      }
+    );
+
+    // Step 19
+    var searchCommunity = shareStream.then(
+      // searching the community
+      function (res) {
+        console.log('\nSearching the community');
+        if (client.tokenExpires < nowSeconds) {
+          return checkTokenExpired(client)
+            .then(function (res) {
+              refreshToken(res, client);
+              return client.getCommunityStreams(
+                tenantId,
+                communityId,
+                sampleStreamId
+              );
+            })
+            .catch(function (err) {
+              logError(err);
+            });
+        } else {
+          return client.getCommunityStreams(
+            tenantId,
+            communityId,
+            sampleStreamId
+          );
+        }
+      }
+    );
+
+    // Step 20
+    var getCommunityData = searchCommunity.then(
+      // getting stream data from the community stream
+      function (res) {
+        console.log('\nFound matching streams:');
+        for (var stream of res.data) {
+          console.log(stream.Id);
+        }
+
+        console.log('\nGetting stream data from the community stream');
+        if (client.tokenExpires < nowSeconds) {
+          return checkTokenExpired(client)
+            .then(function (res) {
+              refreshToken(res, client);
+              return client.getLastValueSelf(res.data[0].Self);
+            })
+            .catch(function (err) {
+              logError(err);
+            });
+        } else {
+          return client.getLastValueSelf(res.data[0].Self);
+        }
+      }
+    );
+
+    var printCommunityData = getCommunityData.then(
+      // print community data
+      function (res) {
+        console.log('\nRetrieved last value:');
+        console.log(res.data);
+      }
+    );
+
+    prevStep = printCommunityData;
+  }
+
   // delete an event
-  var deleteOneEvent = printMetadata2
+  var deleteOneEvent = prevStep
     .then(
-      // Step 18
+      // Step 21
       function (res) {
         console.log('\nDeleting values from the SdsStream');
         if (client.tokenExpires < nowSeconds) {
@@ -2065,7 +2202,7 @@ var app = function (request1, response) {
 
   var createSecondaryStream = deleteWindowEvents
     .then(
-      // Step 19
+      // Step 22
       function (res) {
         console.log('Creating an SdsStream with a secondary index');
         // create SdsStream
@@ -2183,7 +2320,7 @@ var app = function (request1, response) {
   var getOriginalStream2 = updateOriginalStream
     .then(function (res) {
       console.log('\nResponse from update of index on original stream:');
-      console.log(res);
+      console.log(res.data);
       if (client.tokenExpires < nowSeconds) {
         return checkTokenExpired(client)
           .then(function (res) {
@@ -2208,7 +2345,7 @@ var app = function (request1, response) {
   var printOriginalStream = getOriginalStream2
     .then(function (res) {
       console.log('\nOriginal Stream with secondary index:');
-      console.log(res);
+      console.log(res.data);
     })
     .catch(function (err) {
       logError(err);
@@ -2267,7 +2404,7 @@ var app = function (request1, response) {
   var getSecondaryStreamAgain2 = updateSecondaryStream
     .then(function (res) {
       console.log('\nResponse from update of index on secondary stream:');
-      console.log(res);
+      console.log(res.data);
       if (client.tokenExpires < nowSeconds) {
         return checkTokenExpired(client)
           .then(function (res) {
@@ -2296,7 +2433,7 @@ var app = function (request1, response) {
   var printSecondaryStreamAfterUpdate = getSecondaryStreamAgain2
     .then(function (res) {
       console.log('\nSecondary Stream with no secondary index:');
-      console.log(res);
+      console.log(res.data);
     })
     .catch(function (err) {
       logError(err);
@@ -2305,7 +2442,7 @@ var app = function (request1, response) {
   // Adding Compound Index Type
   var createCompoundType = printSecondaryStreamAfterUpdate
     .then(
-      // Step 20
+      // Step 23
       function (res) {
         console.log('Creating an SdsType with a compound index');
         if (client.tokenExpires < nowSeconds) {
@@ -2366,7 +2503,7 @@ var app = function (request1, response) {
       logError(err);
     });
 
-  // Step 21
+  // Step 24
 
   var event2 = [];
 
@@ -2541,7 +2678,7 @@ var app = function (request1, response) {
   // cleanup of namespace
   var cleanup = testFinished
     .finally(
-      // Step 22
+      // Step 25
       // delete the stream
       function () {
         console.log('Cleaning up');
