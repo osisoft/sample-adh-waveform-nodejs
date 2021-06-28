@@ -2036,7 +2036,7 @@ var app = function (request1, response) {
           return checkTokenExpired(client)
             .then(function (res) {
               refreshToken(res, client);
-              return client.updateStreamAccessControl(
+              return client.patchStreamAccessControl(
                 tenantId,
                 sampleNamespaceId,
                 sampleStreamId,
@@ -2047,7 +2047,7 @@ var app = function (request1, response) {
               logError(err);
             });
         } else {
-          return client.updateStreamAccessControl(
+          return client.patchStreamAccessControl(
             tenantId,
             sampleNamespaceId,
             sampleStreamId,

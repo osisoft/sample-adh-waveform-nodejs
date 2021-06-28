@@ -595,7 +595,7 @@ module.exports = {
     };
 
     // update stream ACL
-    this.updateStreamAccessControl = function (
+    this.patchStreamAccessControl = function (
       tenantId,
       namespaceId,
       streamId,
