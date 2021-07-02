@@ -1,6 +1,9 @@
 var http = require('http');
 var config = require('./config.js');
 
+// Constants
+var COMMUNITY_MEMBER_ROLE_TYPE_ID = 'f79a55da-7c76-4600-a809-0f62ca9971d9';
+
 // retrieve configuration
 var resource = config.resource;
 var clientId = config.clientId;
@@ -2008,13 +2011,12 @@ var app = function (request1, response) {
       }
     );
 
-    var communityMemberRoleTypeId = 'f79a55da-7c76-4600-a809-0f62ca9971d9';
     var shareStream = getTenantRoles.then(
       // sharing stream to community
       function (res) {
         var role = res.data.find(
           (r) =>
-            r.RoleTypeId === communityMemberRoleTypeId &&
+            r.RoleTypeId === COMMUNITY_MEMBER_ROLE_TYPE_ID &&
             r.CommunityId === communityId
         );
         console.log('\nFound community member Id:');
