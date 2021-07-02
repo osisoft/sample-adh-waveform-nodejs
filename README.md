@@ -1,6 +1,6 @@
 ﻿# Sequential Data Store NodeJS Sample
 
-**Version:** 1.0.19
+**Version:** 1.1.0
 
 [![Build Status](https://dev.azure.com/osieng/engineering/_apis/build/status/product-readiness/OCS/osisoft.sample-ocs-waveform-nodejs?repoName=osisoft%2Fsample-ocs-waveform-nodejs&branchName=main)](https://dev.azure.com/osieng/engineering/_build/latest?definitionId=2630&repoName=osisoft%2Fsample-ocs-waveform-nodejs&branchName=main)
 
@@ -69,15 +69,22 @@ Finally, a valid namespace ID for the tenant must be given as well. To create a 
 The values to be replaced are in `config.js`:
 
 ```js
-authItems : {'resource' : "https://sdshomeprod.onmicrosoft.com/ocsapi",
-             'authority' : "https://login.windows.net/<TENANT-ID>.onmicrosoft.com/oauth2/token",
-             'clientId' : "PLACEHOLDER_REPLACE_WITH_APPLICATION_IDENTIFIER",
-             'clientSecret' : "PLACEHOLDER_REPLACE_WITH_APPLICATION_SECRET"}
-sdsServerUrl : "PLACEHOLDER_REPLACE_WITH_SDS_SERVER_URL",
-tenantId: "PLACEHOLDER_REPLACE_WITH_TENANT_ID",
-namespaceId: "PLACEHOLDER_REPLACE_WITH_NAMESPACE_ID",
-apiVersion: "v1"
+module.exports = {
+  resource: 'https://dat-b.osisoft.com',
+  clientId: 'REPLACE_WITH_APPLICATION_IDENTIFIER',
+  clientSecret: 'REPLACE_WITH_APPLICATION_SECRET',
+  tenantId: 'REPLACE_WITH_TENANT_ID',
+  namespaceId: 'REPLACE_WITH_NAMESPACE_ID',
+  communityId: ''
+  apiVersion: 'v1'
+}
 ```
+
+### Community
+
+If you would like to see an example of basic interactions with an OCS community, enter an existing community id in the `communityId` field of the configuration. Make sure to also grant the appropriate "Community Member" role to the Client-Credentials Client used by the sample. If you have not yet created a community, see the [documentation](https://docs.osisoft.com/bundle/ocs/page/communities/create-a-community.html) for instructions. Entering a community id will enable three additional steps in the sample.
+
+If you are not using OCS communities, leave the `communityId` property empty.
 
 ## Obtain an Authentication Token
 

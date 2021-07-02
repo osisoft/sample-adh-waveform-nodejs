@@ -61,6 +61,11 @@ module.exports = {
     this.replaceValuesBase = '/Data?allowCreate=false';
     this.removeSingleValueBase = '/{0}/Data?index={1}';
     this.removeMultipleValuesBase = '/{0}/Data?startIndex={1}&endIndex={2}';
+    this.getTenantRoleBase = this.apiBase + '/Tenants/{0}/Roles';
+    this.updateStreamAclBase = this.streamsBase + '/{2}/AccessControl';
+    this.getCommunityStreamsBase =
+      this.apiBase +
+      '-preview/Tenants/{0}/Search/Communities/{1}/Streams?query={2}';
     this.token = '';
     this.tokenExpires = '';
 
@@ -576,6 +581,53 @@ module.exports = {
           '/' +
           streamViewId,
         method: 'DELETE',
+        headers: this.getHeaders(),
+      });
+    };
+
+    // get tenant roles
+    this.getTenantRoles = function (tenantId) {
+      return axios({
+        url: this.url + this.getTenantRoleBase.format([tenantId]),
+        method: 'GET',
+        headers: this.getHeaders(),
+      });
+    };
+
+    // update stream ACL
+    this.patchStreamAccessControl = function (
+      tenantId,
+      namespaceId,
+      streamId,
+      patch
+    ) {
+      return axios({
+        url:
+          this.url +
+          this.updateStreamAclBase.format([tenantId, namespaceId, streamId]),
+        method: 'PATCH',
+        headers: this.getHeaders(),
+        data: JSON.stringify(patch),
+        transformRequest: [(data, headers) => this.gzipCompress(data, headers)],
+      });
+    };
+
+    // search for community streams
+    this.getCommunityStreams = function (tenantId, communityId, query) {
+      return axios({
+        url:
+          this.url +
+          this.getCommunityStreamsBase.format([tenantId, communityId, query]),
+        method: 'GET',
+        headers: this.getHeaders(),
+      });
+    };
+
+    // get last value from stream self link
+    this.getLastValueSelf = function (self) {
+      return axios({
+        url: self + '/Data/Last',
+        method: 'GET',
         headers: this.getHeaders(),
       });
     };
