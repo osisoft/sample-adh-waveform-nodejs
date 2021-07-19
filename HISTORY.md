@@ -1,5 +1,9 @@
 # Version History
 
+## 1.1.2 / 2021-07-19
+
+- Extra token URL validation to resolve Polaris detected issue
+
 ## 1.1.1 / 2021-07-06
 
 - Updated dependencies
