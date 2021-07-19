@@ -82,7 +82,7 @@ module.exports = {
         .then(function (res) {
           var obj = res.data;
           authority = new URL(obj.token_endpoint);
-          resUrl = new url(resource);
+          resUrl = new URL(resource);
           if (
             authority.protocol === resUrl.protocol &&
             authority.hostname === resUrl.hostname
