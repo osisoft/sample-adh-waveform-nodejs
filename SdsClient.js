@@ -81,19 +81,26 @@ module.exports = {
       })
         .then(function (res) {
           var obj = res.data;
-          authority = obj.token_endpoint;
+          authority = new URL(obj.token_endpoint);
+          resUrl = new URL(resource);
+          if (
+            authority.protocol === resUrl.protocol &&
+            authority.hostname === resUrl.hostname
+          ) {
+            var body = new URLSearchParams({
+              grant_type: 'client_credentials',
+              client_id: clientId,
+              client_secret: clientSecret,
+            });
 
-          var body = new URLSearchParams({
-            grant_type: 'client_credentials',
-            client_id: clientId,
-            client_secret: clientSecret,
-          });
-
-          return axios.post(authority, body.toString(), {
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded',
-            },
-          });
+            return axios.post(authority.href, body.toString(), {
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+              },
+            });
+          } else {
+            logError(`Encountered error parsing authority: ${authority.href}`);
+          }
         })
         .catch(function (err) {
           logError(err);
