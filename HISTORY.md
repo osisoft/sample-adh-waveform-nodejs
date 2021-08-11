@@ -1,5 +1,9 @@
 # Version History
 
+## 1.1.3 / 2021-08-11
+
+- Cleaned up gitignore
+
 ## 1.1.2 / 2021-07-19
 
 - Extra token URL validation to resolve Polaris detected issue
