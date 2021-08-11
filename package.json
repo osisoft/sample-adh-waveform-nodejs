@@ -7,8 +7,7 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/osisoft/OSI-Samples-OCS.git",
-    "directory": "basic_samples/SDS/NodeJS"
+    "url": "https://github.com/osisoft/sample-ocs-waveform-nodejs.git"
   },
   "main": "Sample.js",
   "keywords": [],
