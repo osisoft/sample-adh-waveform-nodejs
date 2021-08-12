@@ -1,14 +1,13 @@
 {
   "name": "sds-nodejs",
   "description": "A sample that uses Sequential Data Store in a NodeJS environment.",
-  "version": "1.1.1",
+  "version": "1.1.3",
   "private": true,
   "author": "OSIsoft, LLC",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/osisoft/OSI-Samples-OCS.git",
-    "directory": "basic_samples/SDS/NodeJS"
+    "url": "https://github.com/osisoft/sample-ocs-waveform-nodejs.git"
   },
   "main": "Sample.js",
   "keywords": [],
