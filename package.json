@@ -19,7 +19,7 @@
     "axios": "^0.21.1"
   },
   "devDependencies": {
-    "jasmine": "^3.8.0",
-    "jasmine-reporters": "^2.4.0"
+    "jasmine": "^3.9.0",
+    "jasmine-reporters": "^2.5.0"
   }
 }
