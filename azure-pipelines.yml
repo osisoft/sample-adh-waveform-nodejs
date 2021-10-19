@@ -26,10 +26,6 @@ resources:
 
 variables:
   - template: '/miscellaneous/build_templates/variables.yml@templates'
-  - name: CredFile
-    value: config.js
-  - name: CredFileLibrary
-    value: product-readiness.sds_nodejs.js
   - name: analysisProject
     value: SDS_NodeJS
 
@@ -39,10 +35,9 @@ jobs:
       name: 00-OSIManaged-Containers
       demands: Agent.OS -equals Windows_NT
     steps:
-      - template: '/miscellaneous/build_templates/config.yml@templates'
+      - template: '/miscellaneous/build_templates/appsettings.yml@templates'
         parameters:
-          fileOriginal: $(CredFile)
-          fileLibrary: $(CredFileLibrary)
+          secrets: 'TenantId, NamespaceId, CommunityId, ClientId, ClientSecret'
 
       - script: npm ci
         displayName: 'Install dependencies'

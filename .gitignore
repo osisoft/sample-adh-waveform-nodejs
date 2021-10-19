@@ -122,4 +122,5 @@ junitresults.xml
 
 # Credential config files
 config.js
+appsettings.json
 product-readiness.*
