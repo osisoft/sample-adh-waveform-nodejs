@@ -1,16 +1,16 @@
 var http = require('http');
-var config = require('./config.js');
+var appsettings = require('./appsettings.json');
 
 // Constants
 var COMMUNITY_MEMBER_ROLE_TYPE_ID = 'f79a55da-7c76-4600-a809-0f62ca9971d9';
 
-// retrieve configuration
-var resource = config.resource;
-var clientId = config.clientId;
-var clientSecret = config.clientSecret;
-var tenantId = config.tenantId;
-var apiVersion = config.apiVersion;
-var communityId = config.communityId;
+// retrieve appsettings
+var resource = appsettings.Resource;
+var clientId = appsettings.ClientId;
+var clientSecret = appsettings.ClientSecret;
+var tenantId = appsettings.TenantId;
+var apiVersion = appsettings.ApiVersion;
+var communityId = appsettings.CommunityId;
 var success = true;
 var errorCap = {};
 
@@ -152,7 +152,7 @@ var app = function (request1, response) {
   var clientObj = require('./SdsClient.js');
   var waveDataObj = require('./WaveData.js');
 
-  var sampleNamespaceId = config.namespaceId;
+  var sampleNamespaceId = appsettings.NamespaceId;
   var sampleTypeId = 'WaveData_SampleType';
   var compoundTypeId = 'SampleType_Compound';
   var sampleStreamId = 'WaveData_SampleStream';
