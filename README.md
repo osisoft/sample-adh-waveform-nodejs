@@ -14,7 +14,7 @@ This sample demonstrates how SDS REST APIs are invoked using JavaScript. By exam
 ## Prerequisites
 
 - This application by default will use Port 8080
-- Configure the sample using the file [config.placeholder.js](config.placeholder.js). Before editing, rename this file to `config.js`. This repository's `.gitignore` rules should prevent the file from ever being checked in to any fork or branch, to ensure credentials are not compromised.
+- Configure the sample using the file [appsettings.placeholder.json](appsettings.placeholder.json). Before editing, rename this file to `appsettings.json`. This repository's `.gitignore` rules should prevent the file from ever being checked in to any fork or branch, to ensure credentials are not compromised.
 
 **Note: This application is hosted on HTTP. This is not secure. You should use a certificate and HTTPS.**
 
@@ -66,25 +66,25 @@ Along with client ID and secret values, add the tenant name to the authority val
 
 Finally, a valid namespace ID for the tenant must be given as well. To create a namespace, click on the `Manage` tab then navigate to the `Namespaces` page. At the top the add button will create a new namespace after the required forms are completed. This namespace is now associated with the logged-in tenant and may be used in the sample.
 
-The values to be replaced are in `config.js`:
+The values to be replaced are in `appsettings.json`:
 
-```js
-module.exports = {
-  resource: 'https://dat-b.osisoft.com',
-  clientId: 'REPLACE_WITH_APPLICATION_IDENTIFIER',
-  clientSecret: 'REPLACE_WITH_APPLICATION_SECRET',
-  tenantId: 'REPLACE_WITH_TENANT_ID',
-  namespaceId: 'REPLACE_WITH_NAMESPACE_ID',
-  communityId: ''
-  apiVersion: 'v1'
+```json
+{
+  "Resource": "https://dat-b.osisoft.com",
+  "ApiVersion": "v1",
+  "TenantId": "PLACEHOLDER_REPLACE_WITH_TENANT_ID",
+  "NamespaceId": "PLACEHOLDER_REPLACE_WITH_NAMESPACE_ID",
+  "CommunityId": "",
+  "ClientId": "PLACEHOLDER_REPLACE_WITH_APPLICATION_IDENTIFIER",
+  "ClientSecret": "PLACEHOLDER_REPLACE_WITH_APPLICATION_SECRET"
 }
 ```
 
 ### Community
 
-If you would like to see an example of basic interactions with an OCS community, enter an existing community id in the `communityId` field of the configuration. Make sure to also grant the appropriate "Community Member" role to the Client-Credentials Client used by the sample. If you have not yet created a community, see the [documentation](https://docs.osisoft.com/bundle/ocs/page/communities/create-a-community.html) for instructions. Entering a community id will enable three additional steps in the sample.
+If you would like to see an example of basic interactions with an OCS community, enter an existing community id in the `CommunityId` field of the configuration. Make sure to also grant the appropriate "Community Member" role to the Client-Credentials Client used by the sample. If you have not yet created a community, see the [documentation](https://docs.osisoft.com/bundle/ocs/page/communities/create-a-community.html) for instructions. Entering a community id will enable three additional steps in the sample.
 
-If you are not using OCS communities, leave the `communityId` property empty.
+If you are not using OCS communities, leave the `CommunityId` property empty.
 
 ## Obtain an Authentication Token
 

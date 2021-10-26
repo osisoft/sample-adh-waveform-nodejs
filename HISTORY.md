@@ -1,5 +1,10 @@
 # Version History
 
+## 1.1.5 / 2021-10-26
+
+- Update pipelines to use Azure Key Vault for secrets
+- Change config.js to appsettings.json
+
 ## 1.1.4 / 2021-09-07
 
 - Updated dependencies
