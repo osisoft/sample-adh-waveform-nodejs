@@ -19,6 +19,10 @@ schedules:
 
 resources:
   repositories:
+    - repository: OpsGuildAutomationRepo
+      type: git
+      name: Engineering/OpsGuild.Automation
+      ref: refs/heads/main
     - repository: templates
       type: github
       name: osisoft/OSI-Samples
@@ -55,4 +59,4 @@ jobs:
         displayName: 'Publish test results'
         condition: always()
 
-      - template: '/miscellaneous/build_templates/analysis.yml@templates'
+  - template: '/miscellaneous/build_templates/code-analysis.yml@templates'
