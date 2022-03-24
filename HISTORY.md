@@ -1,5 +1,9 @@
 # Version History
 
+## 1.1.11 / 2022-03-24
+
+- Improving test logging
+
 ## 1.1.10 / 2022-02-28
 
 - Updated dependencies
