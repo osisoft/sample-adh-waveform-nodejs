@@ -12,7 +12,7 @@ describe('SDS NodeJS Sample', function () {
   beforeEach(function () {});
 
   it('should be able to complete the main method', function (done) {
-    console.log('hello?');
+    console.log('Start Test');
     sample = Sample(null, null)
       .catch(function (err) {
         console.log(err);
