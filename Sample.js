@@ -153,15 +153,15 @@ var app = function (request1, response) {
   var waveDataObj = require('./WaveData.js');
 
   var sampleNamespaceId = appsettings.NamespaceId;
-  var sampleTypeId = 'WaveData_SampleType';
-  var compoundTypeId = 'SampleType_Compound';
-  var sampleStreamId = 'WaveData_SampleStream';
-  var sampleStreamSecondaryId = 'SampleStream_Secondary';
-  var sampleStreamIdCompound = 'SampleStream_Compound';
-  var sampleStreamViewId = 'WaveData_SampleStreamView';
-  var targetTypeId = 'targetTypeId';
-  var targetIntegerTypeId = 'targetIntegerTypeId';
-  var manualStreamViewId = 'WaveData_ManualStreamView';
+  var sampleTypeId = 'WaveData_SampleType_NodeJS';
+  var compoundTypeId = 'SampleType_Compound_NodeJS';
+  var sampleStreamId = 'WaveData_SampleStream_NodeJS';
+  var sampleStreamSecondaryId = 'SampleStream_Secondary_NodeJS';
+  var sampleStreamIdCompound = 'SampleStream_Compound_NodeJS';
+  var sampleStreamViewId = 'WaveData_SampleStreamView_NodeJS';
+  var targetTypeId = 'TargetTypeId_NodeJS';
+  var targetIntegerTypeId = 'TargetIntegerTypeId_NodeJS';
+  var manualStreamViewId = 'WaveData_ManualStreamView_NodeJS';
 
   Object.freeze(sdsObjs.sdsTypeCode);
   Object.freeze(sdsObjs.sdsBoundaryType);
