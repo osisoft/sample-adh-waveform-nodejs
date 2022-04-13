@@ -1,8 +1,11 @@
 # Version History
 
-## 1.1.12 / 2022-03-24
+## 1.1.12 / 2022-04-13
 
 - Improving test logging
+## 1.1.11 / 2022-03-25
+
+- Use language specific Ids
 
 ## 1.1.10 / 2022-02-28
 
