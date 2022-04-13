@@ -112,6 +112,10 @@ var dumpStreamViewMap = function (obj) {
 };
 
 var logError = function (err) {
+  if(success){
+    console.log('TenantId:' + tenantId)
+    console.log('NamespaceId:' + sampleNamespaceId)
+  }
   success = false;
   errorCap = err;
   if (typeof err.statusCode !== 'undefined' && err.statusCode === 302) {
@@ -121,7 +125,9 @@ var logError = function (err) {
     console.trace();
     console.log(err.message);
     console.log(err.stack);
-    console.log(err.options.headers['Operation-Id']);
+    if(err.options !== 'undefined'){
+      console.log(err.options.headers['Operation-Id']);
+    }
     throw err;
   }
 };
