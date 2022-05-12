@@ -1,7 +1,7 @@
 {
   "name": "sds-nodejs",
   "description": "A sample that uses Sequential Data Store in a NodeJS environment.",
-  "version": "1.1.11",
+  "version": "1.1.14",
   "private": true,
   "author": "OSIsoft, LLC",
   "license": "Apache-2.0",
@@ -16,10 +16,10 @@
   },
   "requires": true,
   "dependencies": {
-    "axios": "^0.24.0"
+    "axios": "^0.27.2"
   },
   "devDependencies": {
-    "jasmine": "^4.0.1",
+    "jasmine": "^4.1.0",
     "jasmine-reporters": "^2.5.0"
   }
 }
