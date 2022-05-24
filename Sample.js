@@ -2085,7 +2085,6 @@ var app = function (request1, response) {
             });
         } else {
           return client.getCommunityStreams(
-            tenantId,
             communityId,
             sampleStreamId
           );
