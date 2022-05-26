@@ -1,5 +1,9 @@
 # Version History
 
+## 1.1.15 / 2022-05-24
+
+- Update communities queries to be compliant with changes made to the API
+
 ## 1.1.14 / 2022-05-10
 
 - Updated dependencies

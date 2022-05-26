@@ -64,8 +64,7 @@ module.exports = {
     this.getTenantRoleBase = this.apiBase + '/Tenants/{0}/Roles';
     this.updateStreamAclBase = this.streamsBase + '/{2}/AccessControl';
     this.getCommunityStreamsBase =
-      this.apiBase +
-      '-preview/Tenants/{0}/Search/Communities/{1}/Streams?query={2}';
+      this.apiBase + '-preview/Search/Communities/{0}/Streams?query={1}';
     this.token = '';
     this.tokenExpires = '';
 
@@ -620,11 +619,11 @@ module.exports = {
     };
 
     // search for community streams
-    this.getCommunityStreams = function (tenantId, communityId, query) {
+    this.getCommunityStreams = function (communityId, query) {
       return axios({
         url:
           this.url +
-          this.getCommunityStreamsBase.format([tenantId, communityId, query]),
+          this.getCommunityStreamsBase.format([communityId, query]),
         method: 'GET',
         headers: this.getHeaders(),
       });
