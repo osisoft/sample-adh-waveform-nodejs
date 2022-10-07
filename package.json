@@ -16,7 +16,7 @@
   },
   "requires": true,
   "dependencies": {
-    "axios": "^0.27.2"
+    "axios": "^1.1.0"
   },
   "devDependencies": {
     "jasmine": "^4.4.0",
