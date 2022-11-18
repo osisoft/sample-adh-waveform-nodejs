@@ -20,6 +20,6 @@
   },
   "devDependencies": {
     "jasmine": "^4.5.0",
-    "jasmine-reporters": "^2.5.1"
+    "jasmine-reporters": "^2.5.2"
   }
 }
