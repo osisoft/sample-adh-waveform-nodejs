@@ -15,7 +15,7 @@ var success = true;
 var errorCap = {};
 
 var checkTokenExpired = function (client) {
-  return client.getToken(authItems).catch(function (err) {
+  return client.getToken(clientId, clientSecret, resource).catch(function (err) {
     throw err;
   });
 };
