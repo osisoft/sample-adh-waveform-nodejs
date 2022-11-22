@@ -1,4 +1,4 @@
-var http = require('http');
+var https = require('https');
 var appsettings = require('./appsettings.json');
 
 // Constants
@@ -15,7 +15,7 @@ var success = true;
 var errorCap = {};
 
 var checkTokenExpired = function (client) {
-  return client.getToken(authItems).catch(function (err) {
+  return client.getToken(clientId, clientSecret, resource).catch(function (err) {
     throw err;
   });
 };
@@ -2825,8 +2825,7 @@ var app = function (request1, response) {
 
 //if you want to run a server
 var toRun = function () {
-  //This server is hosted over HTTP.  This is not secure and should not be used beyond local testing.
-  http.createServer(app).listen(8080);
+  https.createServer(app).listen(8080);
 };
 
 process.argv = process.argv.slice(2);

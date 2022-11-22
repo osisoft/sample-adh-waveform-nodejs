@@ -98,7 +98,7 @@ This javascript example uses raw OAuth 2 calls to obtain an authentication token
 During initialization, `SdsClient` sets the SdsServerUrl. Then, the first step is to get an authentication token by calling,
 
 ```js
-this.getToken(authItems);
+this.getToken(clientId, clientSecret, resource);
 ```
 
 The token received from `getToken` is included in the headers of each SDS REST API request:
@@ -134,7 +134,7 @@ if (client.tokenExpires < nowSeconds) {
 Note: The `checkTokenExpired` method returns a promise object, which can have a `.then()` and a `.catch()` method associated with it. The `.then()` method is executed when the promise is resolved (or successful) and `.catch()` is executed if an exception or error is thrown. This sample follows a pattern of placing REST calls in the `.then()` method after token acquisition (or other dependent REST calls):
 
 ```js
-var getClientToken = client.getToken(authItems)
+var getClientToken = client.getToken(clientId, clientSecret, resource)
     .catch(function (err) { throw err });
 var createType = getClientToken.then(...<SDS REST call to create a type>...)
 ```
