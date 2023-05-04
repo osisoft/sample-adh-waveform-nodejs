@@ -1,7 +1,4 @@
-﻿# Sequential Data Store NodeJS Sample
-
-| :loudspeaker: **Notice**: Samples have been updated to reflect that they work on AVEVA Data Hub. The samples also work on OSIsoft Cloud Services unless otherwise noted. |
-| -----------------------------------------------------------------------------------------------|  
+# Sequential Data Store NodeJS Sample
 
 **Version:** 1.1.18
 
@@ -159,7 +156,7 @@ var intType = new sdsObjs.SdsType({
 });
 ```
 
-Next, the WaveData properties are each represented by an SdsTypeProperty. Each SdsType field in SdsTypeProperty is assigned an integer or double SdsType. The WaveData Order property represents the type’s key, and its IsKey property is set to true.
+Next, the WaveData properties are each represented by an SdsTypeProperty. Each SdsType field in SdsTypeProperty is assigned an integer or double SdsType. The WaveData Order property represents the type's key, and its IsKey property is set to true.
 
 ```js
 // define properties
@@ -536,7 +533,7 @@ client.getRangeValues(
 );
 ```
 
-To map a property that is beyond the ability of SDS to map on its own, you should define an SdsStreamViewProperty and add it to the SdsStreamView’s Properties collection.
+To map a property that is beyond the ability of SDS to map on its own, you should define an SdsStreamViewProperty and add it to the SdsStreamView's Properties collection.
 
 ```js
 var sinStreamViewProperty = new sdsObjs.SdsStreamViewProperty({ "SourceId": "Sin", "TargetId": "SinInt" });
