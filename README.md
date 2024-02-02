@@ -1,6 +1,6 @@
 # Sequential Data Store NodeJS Sample
 
-**Version:** 1.1.18
+**Version:** 1.1.19
 
 [![Build Status](https://dev.azure.com/osieng/engineering/_apis/build/status/product-readiness/ADH/aveva.sample-adh-waveform-nodejs?branchName=main)](https://dev.azure.com/osieng/engineering/_build/latest?definitionId=2630&branchName=main)
 
