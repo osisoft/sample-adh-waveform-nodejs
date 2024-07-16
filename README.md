@@ -58,7 +58,7 @@ Included in the sample is a configuration file with placeholders that need to be
 
 The SDS Service is secured using Azure Active Directory. The sample application is an example of a _confidential client_. Confidential clients provide an application ID and secret that are authenticated against the directory. These are referred to as client IDs and client secrets, which are associated with a given tenant. The steps necessary to create a new client ID and secret are described below.
 
-First, log on to the [Data Hub Portal](https://datahub.connect.aveva.com) as a user with the Tenant Admission role, and navigate to the `Clients` page under the `Security` tab, which is situated along the left side of the webpage. Three types of clients may be created; we will use a `client-credentials` client in this sample, but for the complete explanation all of three types consult the [CONNECT data services clients](https://docs.osisoft.com/bundle/data-hub/page/set-up/clients/clients-concept.html) documentation. 
+First, log on to the [Data Hub Portal](https://datahub.connect.aveva.com) as a user with the Tenant Admission role, and navigate to the `Clients` page under the `Security` tab, which is situated along the left side of the webpage. Three types of clients may be created; we will use a `client-credentials` client in this sample, but for the complete explanation all of three types consult the [CONNECT data services clients](https://docs.aveva.com/bundle/aveva-data-hub/page/1263323.html) documentation. 
 
 To create a new client, click on the `+ Add Client` button along the top, and select the desired roles for this client. This sample program covers data creation, deletion, and retrieval, so a role or roles with Read, Write, and Delete permissions on the streams collection and individual streams will be necessary. It is encouraged to not use the Tenant Administrator role for a client if possible, but that is an existing role with the necessary permissions for this sample. Tenant Contributor is a role that by default has Read and Write permissions to the necessary collections, so if deletions are not desired, it is recommended to skip those steps in the sample rather than elevating the client in order to follow along.
 
@@ -140,7 +140,7 @@ In the above snippet, the type creation method is called only if token acquisiti
 
 ## Create an SdsType
 
-To use SDS, you define SdsTypes that describe the kinds of data you want to store in SdsStreams. SdsTypes are the model that define SdsStreams. SdsTypes can define simple atomic types, such as integers, floats, or strings, or they can define complex types by grouping other SdsTypes. For more information about SdsTypes, refer to the [SDS documentation](https://ocs-docs.osisoft.com/Content_Portal/Documentation/SequentialDataStore/Data_Store_and_SDS.html).
+To use SDS, you define SdsTypes that describe the kinds of data you want to store in SdsStreams. SdsTypes are the model that define SdsStreams. SdsTypes can define simple atomic types, such as integers, floats, or strings, or they can define complex types by grouping other SdsTypes. For more information about SdsTypes, refer to the [SDS documentation](https://docs.aveva.com/bundle/data-hub/page/developer-guide/sequential-data-store-dev/sds-lp-dev.html).
 
 In the sample code, the SdsType representing WaveData is defined in Sample.js. WaveData contains properties of integer and double atomic types. The constructions begins by defining a base SdsType for each atomic type.
 
@@ -283,7 +283,7 @@ Similarly, we can build a list of objects and insert them in bulk:
     client.insertEvents(tenantId, sampleNamespaceId, sampleStreamId, events);
 ```
 
-The SDS REST API provides many more types of data insertion calls beyond those demonstrated in this application. Go to the [SDS documentation](https://ocs-docs.osisoft.com/Content_Portal/Documentation/SequentialDataStore/Data_Store_and_SDS.html) for more information on available REST API calls.
+The SDS REST API provides many more types of data insertion calls beyond those demonstrated in this application. Go to the [SDS documentation](https://docs.aveva.com/bundle/data-hub/page/developer-guide/sequential-data-store-dev/sds-lp-dev.html) for more information on available REST API calls.
 
 ## Retrieve Values from a Stream
 
@@ -372,7 +372,7 @@ axios({
 - **skip** is the increment by which the retrieval will happen.
 - **count** is how many values you wish to have returned.
 - **reversed** is a boolean that when `true` causes the retrieval to work backwards from the starting point.
-- **boundary_type** is a `SdsBoundaryType` value that determines the behavior if the starting index cannot be found. Refer the to the [SDS documentation](https://ocs-docs.osisoft.com/Content_Portal/Documentation/SequentialDataStore/Data_Store_and_SDS.html) for more information about SdsBoundaryTypes.
+- **boundary_type** is a `SdsBoundaryType` value that determines the behavior if the starting index cannot be found. Refer the to the [SDS documentation](https://docs.aveva.com/bundle/data-hub/page/developer-guide/sequential-data-store-dev/sds-lp-dev.html) for more information about SdsBoundaryTypes.
 
 The `getRangeValues` method is called as shown:
 
@@ -391,7 +391,7 @@ client.getRangeValues(
 
 ### Getting Sampled Values
 
-Sampling allows retrieval of a representative sample of data between a start and end index. Sampling is driven by a specified property or properties of the stream's Sds Type. Property types that cannot be interpolated do not support sampling requests. Strings are an example of a property that cannot be interpolated. For more information see [Interpolation.](https://ocs-docs.osisoft.com/Content_Portal/Documentation/SequentialDataStore/SDS_Types.html#interpolation) Here is the request:
+Sampling allows retrieval of a representative sample of data between a start and end index. Sampling is driven by a specified property or properties of the stream's Sds Type. Property types that cannot be interpolated do not support sampling requests. Strings are an example of a property that cannot be interpolated. For more information see [Interpolation.](https://docs.aveva.com/bundle/data-hub/page/developer-guide/sequential-data-store-dev/sds-read-data.html?_gl=1*b4w3v6*_up*MQ..*_ga*MTk0OTU3MTM2MS4xNzIxMTQzMTI0*_ga_2E8P7THCR4*MTcyMTE0MzEyMy4xLjAuMTcyMTE0MzEyMy4wLjAuMA..*_ga_PNW2Q7E2B0*MTcyMTE0MzEyMy4xLjAuMTcyMTE0MzEyMy4wLjAuMA..#interpolation) Here is the request:
 
 ```js
 axios({
@@ -413,7 +413,7 @@ axios({
 ```
 
 - Parameters are the SdsStream Id, the starting and ending index values for the desired window, the number of intervals to select from, the property or properties to use when sampling, an optional filter by expression, and an optional streamViewId.
-- Note: This method, implemented for example purposes in `SdsClient`, does not include support for SdsBoundaryTypes. For more information about SdsBoundaryTypes and how to implement them with sampling, refer to the [SDS documentation](https://ocs-docs.osisoft.com/Content_Portal/Documentation/SequentialDataStore/Data_Store_and_SDS.html)
+- Note: This method, implemented for example purposes in `SdsClient`, does not include support for SdsBoundaryTypes. For more information about SdsBoundaryTypes and how to implement them with sampling, refer to the [SDS documentation](https://docs.aveva.com/bundle/data-hub/page/developer-guide/sequential-data-store-dev/sds-lp-dev.html)
 
 Here is how it is called:
 
@@ -511,7 +511,7 @@ sampleStream.PropertyOverrides = propertyOverrides;
 return client.updateStream(tenantId, sampleNamespaceId, sampleStream);
 ```
 
-The process consists of two steps. First, the Property Override must be created, then the stream must be updated. Note that the sample retrieves three data points before and after updating the stream to show that it has changed. See the [SDS documentation](https://ocs-docs.osisoft.com/Content_Portal/Documentation/SequentialDataStore/Data_Store_and_SDS.html) for more information about SDS Property Overrides.
+The process consists of two steps. First, the Property Override must be created, then the stream must be updated. Note that the sample retrieves three data points before and after updating the stream to show that it has changed. See the [SDS documentation](https://docs.aveva.com/bundle/data-hub/page/developer-guide/sequential-data-store-dev/sds-lp-dev.html) for more information about SDS Property Overrides.
 
 ## SdsStreamViews
 
